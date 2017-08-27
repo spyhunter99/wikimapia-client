@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class WikimapiaAPI {
 
+    Parser p = new Parser();
     /**
      * Wikimapia API URL
      * Do not change this!
@@ -269,7 +270,6 @@ public class WikimapiaAPI {
     public void getAllCategories(OnCategoryResult callback) {
         int count = 1;
         int page = 1;
-        Parser p = new Parser();
         while (count > 1) {
             URL url = null;
             try {
@@ -295,7 +295,7 @@ public class WikimapiaAPI {
     public List<Category> getCategories(int page, int pageSize) {
         //http://api.wikimapia.org/?function=category.getall&key=  &format=json&page= & count=
         List<Category> ret = new ArrayList<>();
-        Parser p = new Parser();
+
         int count = 100;
 
         while (count > 1) {
@@ -321,7 +321,32 @@ public class WikimapiaAPI {
         return ret;
     }
 
-    public List findByArea(double latNorth, double latSouth, double longEast, double longWest, List<Category> cats) {
+    public SearchResults findByArea(double latNorth, double latSouth, double longEast, double longWest, List<Category> cats) {
+        StringBuilder cateogires = new StringBuilder();
+
+        for (Category c: cats) {
+            cateogires.append(c.getId()).append(",");
+        }
+        cateogires.setLength(cateogires.length()-1);
+
+        URL url = null;
+        InputStream is = null;
+        try {
+         url = new URL(m_Url + "/?function=place.getbyarea&key=" + m_Key + "&format=json&page=" + 1 + "&count=" + 100 + "&lon_min=" + longWest + "&lat_min=" + latSouth +"&lon_max=" + longEast+ "&lat_max=" + latNorth + "&categories=" + cateogires.toString());
+            System.out.println("fetching " + url.toString());
+            is = url.openStream();
+            SearchResults searchResults = p.parseResults(is);
+           return searchResults;
+
+
+        } catch (Throwable t) {
+            t.printStackTrace();
+        } finally {
+            if (is != null) try {
+                is.close();
+            } catch (Exception ex) {
+            }
+        }
         return null;
     }
 }

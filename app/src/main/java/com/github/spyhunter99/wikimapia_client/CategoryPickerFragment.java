@@ -65,8 +65,7 @@ public class CategoryPickerFragment extends Fragment implements WikimapiaAPI.OnC
             public void afterTextChanged(Editable arg0) {}
         });
 
-        api = new WikimapiaAPI("97ADFBFD-3EDAEC5C-0D2D11EF-A917D83F-E694A7B8-3BA3D1FD-E9F8D9CC-446AA013");
-
+        api = new WikimapiaAPI("YOUR KEY");
             api.getAllCategories(this);
         return root;
     }
