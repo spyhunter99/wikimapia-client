@@ -1,0 +1,1 @@
+include ':wikimapia4j', ':sample-client', 'app'
