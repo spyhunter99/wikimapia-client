@@ -32,7 +32,6 @@ public class Parser {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         Categories ret = mapper.readValue( is, Categories.class);
 
-        is.close();
         return ret;
     }
 
@@ -43,7 +42,6 @@ public class Parser {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         SearchResults ret = mapper.readValue( is, SearchResults.class);
 
-        is.close();
         return ret;
     }
 

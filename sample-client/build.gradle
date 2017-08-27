@@ -20,7 +20,7 @@ compileJava {
 
 dependencies{
     compile "commons-cli:commons-cli:${project.property('commons-cli.version')}"
-
+    compile project(":wikimapia4j")
     testCompile "junit:junit:${project.property('junit.version')}"
 }
 
