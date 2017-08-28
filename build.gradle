@@ -1,5 +1,4 @@
 buildscript {
-
     repositories {
         jcenter()
         mavenCentral()
@@ -8,10 +7,7 @@ buildscript {
 
     dependencies {
         classpath "com.android.tools.build:gradle:${project.property('android-plugin.version')}"
-
     }
-
-
 }
 
 allprojects  {
@@ -24,8 +20,7 @@ allprojects  {
             ( project.hasProperty('pom.version') ? project.property('pom.version') : "1.0" )
 
     //Use this for your project
-    // apply from: 'https://raw.githubusercontent.com/gradle-fury/gradle-fury/master/gradle/maven-support.gradle'
-    apply from: "${rootDir}/gradle-fury/gradle/maven-support.gradle"
+    apply from: 'https://raw.githubusercontent.com/gradle-fury/gradle-fury/master/gradle/maven-support.gradle'
 
     // forces all changing dependencies (i.e. SNAPSHOTs) to automagicially download
     // (thanks, @BillBarnhill!)
@@ -39,6 +34,9 @@ allprojects  {
         jcenter()
         mavenCentral()
         mavenLocal()
+        maven {
+            url "https://maven.google.com"
+        }
     }
 
     tasks.withType(JavaCompile) {
@@ -69,8 +67,7 @@ allprojects  {
     /*******************************************************/
     /*******************************************************/
     if (project.hasProperty('profile') && project.profile.split(',').contains("ci")) {
-        apply from: "${rootDir}/gradle-fury/gradle/quality.gradle"
-        //apply from 'https://raw.githubusercontent.com/gradle-fury/gradle-fury/master/gradle/quality.gradle'
+        apply from: 'https://raw.githubusercontent.com/gradle-fury/gradle-fury/master/gradle/quality.gradle'
     }
     /*******************************************************/
     /*******************************************************/
@@ -95,8 +92,7 @@ subprojects {
 
 //this gives us the generateMasterKey and encryptPassword tasks
 //see https://github.com/chrisdoyle/gradle-fury/issues/67
-//apply from 'https://raw.githubusercontent.com/gradle-fury/gradle-fury/master/gradle/encryption.gradle'
-apply from: "${rootDir}/gradle-fury/gradle/encryption.gradle"
+apply from: 'https://raw.githubusercontent.com/gradle-fury/gradle-fury/master/gradle/encryption.gradle'
 
 /*******************************************************/
 /*******************************************************/
@@ -117,14 +113,11 @@ apply from: "${rootDir}/gradle-fury/gradle/encryption.gradle"
 /*******************************************************/
 
 //this is the gradle-fury site plugin, very similar to the maven site plugin
-//apply from 'https://raw.githubusercontent.com/gradle-fury/gradle-fury/master/gradle/site.gradle'
+apply from: 'https://raw.githubusercontent.com/gradle-fury/gradle-fury/master/gradle/site.gradle'
 
 //tip, you can override the output directory of the site by uncommenting the following
 //note that gradlew siteWar will always go to the build/site.war file
 ext.buildWebsiteDir = rootDir.absolutePath + "/docs/"
-
-apply from: "${rootDir}/gradle-fury/gradle/site.gradle"
-
 
 //this task is a gradle-fury specific thing, since we want to reuse the project readme as the homepage
 task copyReadme() << {

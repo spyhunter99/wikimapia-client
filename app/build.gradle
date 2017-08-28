@@ -1,11 +1,29 @@
 apply plugin: 'com.android.application'
-apply from: "${rootDir}/gradle-fury/gradle/android-support.gradle"
-android {
 
+android {
+    compileSdkVersion Integer.valueOf(project.property('android.compileSdkVersion'))
+    buildToolsVersion project.property('android.buildToolsVersion')
+
+    defaultConfig {
+        applicationId "com.github.spyhunter99.wikimapia_client"
+        minSdkVersion Integer.valueOf(project.property('android.minSdkVersion'))
+        targetSdkVersion Integer.valueOf(project.property('android.targetSdkVersion'))
+    }
+
+    packagingOptions {
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/beans.xml'
+        exclude 'META-INF/*'
+        exclude 'plugin.xml'
+        exclude 'about_files/*'
+        exclude 'plugin.properties'
+    }
 }
 
 dependencies {
-
-    compile 'com.android.support:support-v4:23.4.0'
+    compile "com.android.support:support-v4:${project.property('android-support.version')}"
     compile project(":wikimapia4j")
 }

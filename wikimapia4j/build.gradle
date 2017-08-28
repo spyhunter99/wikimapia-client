@@ -2,9 +2,6 @@ description = 'Wikimapia client'
 
 apply plugin: 'java'
 
-
-
-
 compileJava {
     sourceCompatibility = "${project.property('compileJava.sourceCompatibility')}"
     targetCompatibility = "${project.property('compileJava.targetCompatibility')}"
