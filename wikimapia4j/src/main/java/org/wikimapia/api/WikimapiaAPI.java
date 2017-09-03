@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -268,21 +267,20 @@ public class WikimapiaAPI {
      * @param callback
      */
     public void getAllCategories(OnCategoryResult callback) {
-        int count = 1;
-        int page = 1;
-        while (count > 1) {
-            URL url = null;
-            try {
-                url = new URL(m_Url + "/?function=category.getall&key=" + m_Key + "&format=json&page=" + page + "&count=100");
+        try {
+            int count;
+            int page = 1;
+            Categories result = new Categories();
+            do {
+                URL url = new URL(m_Url + "/?function=category.getall&key=" + m_Key + "&format=json&page=" + page++ + "&count=100");
                 Categories categories = p.parseCategoryResults(url.openStream());
                 count = categories.getCategories().size();
-                callback.onCategoryResult(categories);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-
+                result.addAll(categories);
+            } while (count > 0);
+            callback.onCategoryResult(result);
+        } catch (Exception e) {
+            callback.onCategoryResult(new Categories());
         }
-
     }
 
     /**
@@ -292,12 +290,10 @@ public class WikimapiaAPI {
      * @param pageSize
      * @return
      */
-    public List<Category> getCategories(int page, int pageSize) {
+    public Categories getCategories(int page, int pageSize) {
         //http://api.wikimapia.org/?function=category.getall&key=  &format=json&page= & count=
-        List<Category> ret = new ArrayList<>();
-
+        Categories result = new Categories();
         int count = 100;
-
         while (count > 1) {
             URL url = null;
             InputStream is = null;
@@ -307,7 +303,7 @@ public class WikimapiaAPI {
                 is = url.openStream();
                 Categories categories = p.parseCategoryResults(is);
                 count = categories.getCategories().size();
-                ret.addAll(categories.categories);
+                result.addAll(categories);
             } catch (Throwable t) {
                 t.printStackTrace();
             } finally {
@@ -318,7 +314,7 @@ public class WikimapiaAPI {
             }
 
         }
-        return ret;
+        return result;
     }
 
     public SearchResults findByArea(double latNorth, double latSouth, double longEast, double longWest, List<Category> cats) {

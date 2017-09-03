@@ -8,6 +8,9 @@ package org.wikimapia.api;
 
 public class Category {
     int id;
+    int amount;
+    String icon;
+    String name;
 
     public int getId() {
         return id;
@@ -17,12 +20,12 @@ public class Category {
         this.id = id;
     }
 
-    public int getCount() {
-        return count;
+    public int getAmount() {
+        return amount;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 
     public String getIcon() {
@@ -41,7 +44,4 @@ public class Category {
         this.name = name;
     }
 
-    int count;
-    String icon;
-    String name;
 }

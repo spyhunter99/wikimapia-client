@@ -10,6 +10,13 @@ import java.util.List;
  */
 
 public class Categories {
+
+    List<Category> categories = new ArrayList<>();
+
+    public void addAll(Categories categories) {
+        this.categories.addAll(categories.getCategories());
+    }
+
     public List<Category> getCategories() {
         return categories;
     }
@@ -18,5 +25,7 @@ public class Categories {
         this.categories = categories;
     }
 
-    List<Category> categories = new ArrayList<>();
+    public int size() {
+        return this.categories.size();
+    }
 }

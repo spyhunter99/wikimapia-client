@@ -7,7 +7,7 @@ compileJava {
     targetCompatibility = "${project.property('compileJava.targetCompatibility')}"
 }
 dependencies {
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.1'
     testCompile "junit:junit:${project.property('junit.version')}"
 }
 

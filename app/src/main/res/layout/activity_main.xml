@@ -13,12 +13,13 @@
     tools:context="com.github.spyhunter99.wikimapia_client.MainActivity">
 
     <Button
-        android:id="@+id/loadcats"
+        android:id="@+id/load_categories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Load categories"/>
 
     <Button
+        android:id="@+id/view_categories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="View categories"/>
