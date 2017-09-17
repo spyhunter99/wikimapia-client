@@ -1,5 +1,7 @@
 package org.wikimapia.api;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,10 @@ import java.util.List;
 
 public class SearchResults {
     String language;
+    long found;
+    @SerializedName("folder")
+    List<Place> places = new ArrayList<>();
+    int page, count;
 
     public String getLanguage() {
         return language;
@@ -52,7 +58,14 @@ public class SearchResults {
         this.count = count;
     }
 
-    long found;
-    List<Place> places = new ArrayList<>();
-    int page,count;
+    @Override
+    public String toString() {
+        return "SearchResults{" +
+                "language='" + language + '\'' +
+                ", found=" + found +
+                ", places=" + places +
+                ", page=" + page +
+                ", count=" + count +
+                '}';
+    }
 }

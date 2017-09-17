@@ -23,4 +23,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="View categories"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="Restaurants in Paris" />
+
+    <TextView
+        android:id="@+id/restaurant_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>
