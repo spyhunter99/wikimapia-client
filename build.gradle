@@ -3,10 +3,11 @@ buildscript {
         jcenter()
         mavenCentral()
         mavenLocal()
+        google()
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:${project.property('android-plugin.version')}"
+        classpath 'com.android.tools.build:gradle:3.0.0'
     }
 }
 
