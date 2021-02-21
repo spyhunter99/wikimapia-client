@@ -8,6 +8,7 @@ package org.wikimapia.api;
 
 public class Tag {
     int id;
+    String title;
 
     public int getId() {
         return id;
@@ -25,5 +26,11 @@ public class Tag {
         this.title = title;
     }
 
-    String title;
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }

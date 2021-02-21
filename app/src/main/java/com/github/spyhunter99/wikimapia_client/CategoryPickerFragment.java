@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class CategoryPickerFragment extends Fragment implements WikimapiaAPI.OnCategoryResult {
 
+    private static final String API_KEY = "7ACE1615-C680DC41-4697D707-0EB6D272-97E7501E-11D67C05-7A0544FB-25B194DA";
+
     List<Category> list = new ArrayList<>();
     EditText lv;
     EditText inputSearch;
@@ -65,8 +67,8 @@ public class CategoryPickerFragment extends Fragment implements WikimapiaAPI.OnC
             public void afterTextChanged(Editable arg0) {}
         });
 
-        api = new WikimapiaAPI("YOUR KEY");
-            api.getAllCategories(this);
+        api = new WikimapiaAPI(API_KEY);
+        api.getAllCategories(this);
         return root;
     }
 

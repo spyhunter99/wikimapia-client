@@ -7,8 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * https://raw.githubusercontent.com/Sannis/wikimapia-api-clients/master/java/WikimapiaAPI.java
@@ -21,7 +21,21 @@ import java.util.List;
  */
 public class WikimapiaAPI {
 
-    Parser p = new Parser();
+    Parser m_Parser = new Parser();
+
+    public enum Format {
+        XML("xml"),
+        JSON("json"),
+        KML("kml"),
+        BINARY("binary");
+
+        public final String key;
+
+        Format(String format) {
+            key = format;
+        }
+    }
+
     /**
      * Wikimapia API URL
      * Do not change this!
@@ -43,7 +57,7 @@ public class WikimapiaAPI {
      * For now we support: xml, json, kml, binary
      * Default: xml
      */
-    protected String m_Format = "xml";
+    protected Format m_Format = Format.XML;
 
     /**
      * Packing output data parameter
@@ -67,6 +81,17 @@ public class WikimapiaAPI {
         m_Key = apiKey;
     }
 
+
+    /**
+     *
+     * @param apiKey
+     * @param format
+     */
+    public WikimapiaAPI(String apiKey, Format format) {
+        m_Key = apiKey;
+        m_Format = format;
+    }
+
     /**
      * Set API output data format
      *
@@ -74,7 +99,7 @@ public class WikimapiaAPI {
      * @return boolean
      * @tutorial http://wikimapia.org/api
      */
-    public void setFormat(String format) {
+    public void setFormat(Format format) {
         m_Format = format;
     }
 
@@ -83,7 +108,7 @@ public class WikimapiaAPI {
      *
      * @return string
      */
-    public String getFormat() {
+    public Format getFormat() {
         return m_Format;
     }
 
@@ -206,8 +231,10 @@ public class WikimapiaAPI {
      * @param int    $page
      * @return string
      */
-    public String getObjectsBySearchQuery(String query, int page) {
-        return doSendApiRequest("search", "q=" + query + "&page=" + page);
+    public SearchResults getObjectsBySearchQuery(String query, double lat, double lon, int page, int pageSize) {
+        String result = doSendApiRequest("search", "q=" + query + "&lat=" + lat + "&lon=" + lon +
+                "&page=" + page + "&count=" + pageSize);
+        return m_Parser.parseResults(result);
     }
 
     /**
@@ -216,9 +243,9 @@ public class WikimapiaAPI {
      * @param string $query
      * @return string
      */
-    public String getObjectsBySearchQuery(String query) {
-        return getObjectsBySearchQuery(query, 1);
-    }
+//    public SearchResults getObjectsBySearchQuery(String query) {
+//        return getObjectsBySearchQuery(query, 1);
+//    }
 
     /**
      * Send request to api
@@ -236,7 +263,7 @@ public class WikimapiaAPI {
         String str = "";
         try {
             // Create a URL for the desired page
-            URL url = new URL(m_Url + "/?function=" + function + "&key=" + m_Key + "&format=" + m_Format
+            URL url = new URL(m_Url + "/?function=" + function + "&key=" + m_Key + "&format=" + m_Format.key
                 + "&pack=" + m_Packing + "&language=" + m_Language + "&" + args);
 
             // Read all the text returned by the server
@@ -268,21 +295,20 @@ public class WikimapiaAPI {
      * @param callback
      */
     public void getAllCategories(OnCategoryResult callback) {
-        int count = 1;
-        int page = 1;
-        while (count > 1) {
-            URL url = null;
-            try {
-                url = new URL(m_Url + "/?function=category.getall&key=" + m_Key + "&format=json&page=" + page + "&count=100");
-                Categories categories = p.parseCategoryResults(url.openStream());
+        try {
+            int count;
+            int page = 1;
+            Categories result = new Categories();
+            do {
+//                URL url = new URL(m_Url + "/?function=category.getall&key=" + m_Key + "&format=json&page=" + page++ + "&count=100");
+                Categories categories = getCategories(page++, 100);
                 count = categories.getCategories().size();
-                callback.onCategoryResult(categories);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-
+                result.addAll(categories);
+            } while (count > 0);
+            callback.onCategoryResult(result);
+        } catch (Exception e) {
+            callback.onCategoryResult(new Categories());
         }
-
     }
 
     /**
@@ -292,33 +318,18 @@ public class WikimapiaAPI {
      * @param pageSize
      * @return
      */
-    public List<Category> getCategories(int page, int pageSize) {
+    public Categories getCategories(int page, int pageSize) {
         //http://api.wikimapia.org/?function=category.getall&key=  &format=json&page= & count=
-        List<Category> ret = new ArrayList<>();
-
-        int count = 100;
-
-        while (count > 1) {
-            URL url = null;
-            InputStream is = null;
-            try {
-                url = new URL(m_Url + "/?function=category.getall&key=" + m_Key + "&format=json&page=" + page + "&count=" + pageSize);
-                System.out.println("fetching " + url.toString());
-                is = url.openStream();
-                Categories categories = p.parseCategoryResults(is);
-                count = categories.getCategories().size();
-                ret.addAll(categories.categories);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            } finally {
-                if (is != null) try {
-                    is.close();
-                } catch (Exception ex) {
-                }
-            }
-
+        Categories result = new Categories();
+        try {
+            String reply = doSendApiRequest("category.getall",
+                    String.format("page=%d&count=%d", page, pageSize));
+            Categories categories = m_Parser.parseCategoryResults(reply);
+            result.addAll(categories);
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
-        return ret;
+        return result;
     }
 
     public SearchResults findByArea(double latNorth, double latSouth, double longEast, double longWest, List<Category> cats) {
@@ -335,7 +346,7 @@ public class WikimapiaAPI {
          url = new URL(m_Url + "/?function=place.getbyarea&key=" + m_Key + "&format=json&page=" + 1 + "&count=" + 100 + "&lon_min=" + longWest + "&lat_min=" + latSouth +"&lon_max=" + longEast+ "&lat_max=" + latNorth + "&categories=" + cateogires.toString());
             System.out.println("fetching " + url.toString());
             is = url.openStream();
-            SearchResults searchResults = p.parseResults(is);
+            SearchResults searchResults = m_Parser.parseResults(is);
            return searchResults;
 
 

@@ -1,5 +1,7 @@
 package org.wikimapia.api;
 
+import java.util.List;
+
 /**
  * created on 1/11/2017.
  *
@@ -7,21 +9,5 @@ package org.wikimapia.api;
  */
 
 public class Polygon {
-    double x,y;
-
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
+    public List<LatLon> points;
 }
